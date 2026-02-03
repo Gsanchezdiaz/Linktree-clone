@@ -11,13 +11,13 @@ async function testDatabase() {
 
     // Test 2: Create a test user
     console.log("\n📝 Creating a test user...")
-    const newUser = await prisma.user.create({
-      data: {
-        email: "demo@example.com",
-        name: "Demo User",
-      },
-    })
-    console.log("✅ Created user:", newUser)
+    // const newUser = await prisma.user.create({
+    //   data: {
+    //     email: "demo@example.com",
+    //     name: "Demo User",
+    //   },
+    // })
+    //console.log("✅ Created user:", newUser)
 
     // Test 3: Fetch all users
     console.log("\n📋 Fetching all users...")
