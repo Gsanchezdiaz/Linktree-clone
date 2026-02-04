@@ -1,122 +1,110 @@
 import { SignInButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "../lib/prisma";
-import { claimUsername } from "./actions";
+import { claimUsername, addLink, deleteLink } from "./actions";
 
 export default async function Page() {
   const authUser = await currentUser();
 
+  // Not signed in -> show call to sign in
   if (!authUser) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6">
-        <div
-          className="w-full max-w-md rounded-xl border"
-          style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}
-        >
-          <div className="p-6">
-            <h1 className="text-5xl font-extrabold text-black leading-tight">Saca una ronda ☕</h1>
-            <p className="mt-4 text-gray-500">¿Te gusta mi trabajo? Invítame un café y apóyame para seguir creando.</p>
-
-            <div className="mt-6 flex flex-col gap-3">
-              <SignInButton>
-                <button className="py-4 px-8 rounded-full font-semibold text-black" style={{ backgroundColor: "var(--cta-yellow)" }}>
-                  Invítame un café
-                </button>
-              </SignInButton>
-
-              <button className="py-4 px-8 rounded-full border bg-white text-black font-medium" style={{ borderColor: "var(--border-subtle)" }}>
-                Compartir perfil
-              </button>
-            </div>
+      <main className="min-h-screen flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-md rounded-xl border p-8 text-center" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+          <h1 className="text-3xl font-extrabold mb-2">Bienvenido</h1>
+          <p className="text-gray-500 mb-6">Inicia sesión para reclamar tu username y administrar tus links.</p>
+          <div className="flex justify-center">
+            <SignInButton />
           </div>
         </div>
       </main>
     );
   }
 
-  const authEmail =
-    authUser.primaryEmailAddress?.emailAddress ||
-    authUser.emailAddresses?.[0]?.emailAddress;
+  // Safe email extraction from Clerk user
+  const email = authUser.emailAddresses?.[0]?.emailAddress ?? authUser.primaryEmailAddress?.emailAddress ?? undefined;
 
-  let dbUser: any = null;
-  try {
-    dbUser = (await (prisma.user as any).findFirst({
-      where: { email: authEmail },
-      include: { links: true },
-    })) as any;
-  } catch (err) {
-    throw err;
-  }
+  const dbUser = await prisma.user.findUnique({
+    where: { email },
+    include: { links: { orderBy: { createdAt: "desc" } } },
+  });
 
+  // If user is signed in but hasn't claimed a username/profile yet
   if (!dbUser) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6">
-        <div className="w-full max-w-md rounded-xl border" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
-          <div className="p-6">
-            <h2 className="text-4xl font-extrabold">Reclama tu username</h2>
-            <p className="mt-2 text-gray-500">Elige un nombre único (mínimo 3 caracteres; letras, números o _).</p>
+      <main className="min-h-screen flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-lg rounded-xl border p-8" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+          <h2 className="text-2xl font-semibold">¡Bienvenido!</h2>
+          <p className="mt-2 text-gray-500">Elige un username para tu perfil público.</p>
 
-            <form action={claimUsername} className="mt-6 flex gap-3">
-              <input
-                name="username"
-                type="text"
-                placeholder="tu_username"
-                minLength={3}
-                required
-                className="flex-1 px-4 py-3 rounded-xl border"
-                style={{ borderColor: "var(--border-subtle)" }}
-              />
-              <button type="submit" className="py-4 px-8 rounded-full font-semibold" style={{ backgroundColor: "var(--cta-yellow)", color: "#000" }}>
-                Reclamar
-              </button>
-            </form>
-          </div>
+          <form action={claimUsername} className="mt-6 flex flex-col gap-3">
+            <input name="username" placeholder="Tu username (ej: juan)" className="w-full px-4 py-3 rounded-xl border" style={{ borderColor: "var(--border-subtle)" }} required />
+            <input name="name" placeholder="Tu nombre (opcional)" className="w-full px-4 py-3 rounded-xl border" style={{ borderColor: "var(--border-subtle)" }} />
+            <button type="submit" className="mt-2 w-full py-4 rounded-full font-semibold" style={{ backgroundColor: "var(--cta-yellow)", color: "#000" }}>Reclamar username</button>
+          </form>
         </div>
       </main>
     );
   }
 
+  // Signed in and has a db profile -> dashboard
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-2xl rounded-xl border" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
-        <div className="p-6 md:p-10">
-          <div className="flex items-start gap-6">
-            <div className="shrink-0">
-              <div className="w-20 h-20 rounded-xl bg-white border flex items-center justify-center" style={{ borderColor: "var(--border-subtle)" }}>
-                <span className="text-2xl font-bold">👋</span>
-              </div>
+    <main className="min-h-screen flex items-start justify-center px-6 py-10">
+      <div className="w-full max-w-2xl space-y-6">
+        {/* Welcome card */}
+        <div className="rounded-xl border p-6" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-xl bg-white border flex items-center justify-center" style={{ borderColor: "var(--border-subtle)" }}>
+              <span className="text-2xl">👋</span>
             </div>
-
             <div>
-              <h1 className="text-5xl font-extrabold">{dbUser.name ?? dbUser.username}</h1>
-              <p className="mt-2 text-gray-500">Tu username: <span className="font-medium text-black">{dbUser.username}</span></p>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <a className="py-4 px-8 rounded-full font-semibold" style={{ backgroundColor: "var(--cta-yellow)", color: "#000" }} href="#">
-                  Support
-                </a>
-                <button className="py-4 px-6 rounded-full border bg-white text-black" style={{ borderColor: "var(--border-subtle)" }}>
-                  Edit profile
-                </button>
-              </div>
+              <h1 className="text-4xl font-extrabold text-black">{dbUser.name ?? dbUser.username}</h1>
+              <p className="mt-1 text-gray-500">Tu username: <span className="font-medium text-black">{dbUser.username}</span></p>
             </div>
           </div>
+          <div className="mt-6 flex gap-3">
+            <a className="py-3 px-6 rounded-full font-semibold" style={{ backgroundColor: "var(--cta-yellow)", color: "#000" }} href="#">
+              Support
+            </a>
+            <button className="py-3 px-5 rounded-full border bg-white text-black" style={{ borderColor: "var(--border-subtle)" }}>
+              Edit profile
+            </button>
+          </div>
+        </div>
 
-          <section className="mt-8">
-            <h3 className="font-semibold mb-3">Tus links</h3>
-            {dbUser.links && dbUser.links.length > 0 ? (
-              <div className="grid gap-3">
-                {dbUser.links.map((l: any) => (
-                  <a key={l.id} href={l.url} className="block rounded-xl p-4" style={{ backgroundColor: "#ffffff", border: `1px solid ${"var(--border-subtle)"}` }}>
+        {/* Add Link card */}
+        <div className="rounded-xl border p-6" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+          <h2 className="text-2xl font-semibold">Agregar un link</h2>
+          <p className="mt-2 text-gray-500">Añade un link que quieras compartir en tu perfil.</p>
+
+          <form action={addLink} className="mt-4 flex flex-col gap-3">
+            <input name="title" placeholder="Título" className="w-full px-4 py-3 rounded-xl border" style={{ borderColor: "var(--border-subtle)" }} required />
+            <input name="url" placeholder="https://ejemplo.com" className="w-full px-4 py-3 rounded-xl border" style={{ borderColor: "var(--border-subtle)" }} required />
+            <button type="submit" className="mt-2 w-full py-4 rounded-full font-semibold" style={{ backgroundColor: "var(--cta-yellow)", color: "#000" }}>Agregar link</button>
+          </form>
+        </div>
+
+        {/* Links list card */}
+        <div className="rounded-xl border p-6" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+          <h3 className="font-semibold mb-3">Tus links</h3>
+          {dbUser.links && dbUser.links.length > 0 ? (
+            <div className="grid gap-3">
+              {dbUser.links.map((l: any) => (
+                <div key={l.id} className="flex items-center justify-between rounded-xl p-4 bg-white" style={{ border: `1px solid var(--border-subtle)` }}>
+                  <div className="pr-4">
                     <div className="font-medium">{l.title ?? l.url}</div>
                     <div className="text-sm text-gray-500">{l.url}</div>
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">Aún no tienes links.</p>
-            )}
-          </section>
+                  </div>
+                  <form action={deleteLink} method="post">
+                    <input type="hidden" name="linkId" value={l.id} />
+                    <button type="submit" className="py-2 px-4 rounded-full border bg-white text-black" style={{ borderColor: "var(--border-subtle)" }}>Eliminar</button>
+                  </form>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500">Aún no tienes links. Usa el formulario de arriba para agregar uno.</p>
+          )}
         </div>
       </div>
     </main>
