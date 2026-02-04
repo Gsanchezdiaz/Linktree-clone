@@ -8,15 +8,27 @@ export default async function Page() {
 
   if (!authUser) {
     return (
-      <main className="p-8">
-        <h1 className="text-2xl font-bold">Bienvenido a Linktree Clone</h1>
-        <p className="mt-4">Crea y comparte tus links fácilmente.</p>
-        <div className="mt-6">
-          <SignInButton>
-            <button className="px-4 py-2 rounded bg-[#6c47ff] text-white">
-              Get started
-            </button>
-          </SignInButton>
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <div
+          className="w-full max-w-md rounded-xl border"
+          style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}
+        >
+          <div className="p-6">
+            <h1 className="text-5xl font-extrabold text-black leading-tight">Saca una ronda ☕</h1>
+            <p className="mt-4 text-gray-500">¿Te gusta mi trabajo? Invítame un café y apóyame para seguir creando.</p>
+
+            <div className="mt-6 flex flex-col gap-3">
+              <SignInButton>
+                <button className="py-4 px-8 rounded-full font-semibold text-black" style={{ backgroundColor: "var(--cta-yellow)" }}>
+                  Invítame un café
+                </button>
+              </SignInButton>
+
+              <button className="py-4 px-8 rounded-full border bg-white text-black font-medium" style={{ borderColor: "var(--border-subtle)" }}>
+                Compartir perfil
+              </button>
+            </div>
+          </div>
         </div>
       </main>
     );
@@ -38,62 +50,75 @@ export default async function Page() {
 
   if (!dbUser) {
     return (
-      <main className="p-8">
-        <h2 className="text-xl font-semibold">Reclama tu username</h2>
-        <p className="mt-2">
-          Elige un nombre único (mínimo 3 caracteres, letras, números o _).
-        </p>
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <div className="w-full max-w-md rounded-xl border" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+          <div className="p-6">
+            <h2 className="text-4xl font-extrabold">Reclama tu username</h2>
+            <p className="mt-2 text-gray-500">Elige un nombre único (mínimo 3 caracteres; letras, números o _).</p>
 
-        <form action={claimUsername} className="mt-4 flex gap-2">
-          <input
-            name="username"
-            type="text"
-            placeholder="tu_username"
-            minLength={3}
-            required
-            className="px-3 py-2 border rounded"
-          />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-[#6c47ff] text-white rounded"
-          >
-            Reclamar
-          </button>
-        </form>
+            <form action={claimUsername} className="mt-6 flex gap-3">
+              <input
+                name="username"
+                type="text"
+                placeholder="tu_username"
+                minLength={3}
+                required
+                className="flex-1 px-4 py-3 rounded-xl border"
+                style={{ borderColor: "var(--border-subtle)" }}
+              />
+              <button type="submit" className="py-4 px-8 rounded-full font-semibold" style={{ backgroundColor: "var(--cta-yellow)", color: "#000" }}>
+                Reclamar
+              </button>
+            </form>
+          </div>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold">
-        Hola, {dbUser.name ?? dbUser.username}
-      </h1>
-      <p className="mt-2 text-sm text-gray-600">
-        Tu username: {dbUser.username}
-      </p>
+    <main className="min-h-screen flex items-center justify-center px-6">
+      <div className="w-full max-w-2xl rounded-xl border" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+        <div className="p-6 md:p-10">
+          <div className="flex items-start gap-6">
+            <div className="shrink-0">
+              <div className="w-20 h-20 rounded-xl bg-white border flex items-center justify-center" style={{ borderColor: "var(--border-subtle)" }}>
+                <span className="text-2xl font-bold">👋</span>
+              </div>
+            </div>
 
-      <section className="mt-6">
-        <h3 className="font-semibold">Tus links</h3>
-        {dbUser.links && dbUser.links.length > 0 ? (
-          <ul className="mt-2 space-y-2">
-            {dbUser.links.map((l: any) => (
-              <li key={l.id}>
-                <a
-                  href={l.url}
-                  className="text-blue-600 underline"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {l.title ?? l.url}
+            <div>
+              <h1 className="text-5xl font-extrabold">{dbUser.name ?? dbUser.username}</h1>
+              <p className="mt-2 text-gray-500">Tu username: <span className="font-medium text-black">{dbUser.username}</span></p>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a className="py-4 px-8 rounded-full font-semibold" style={{ backgroundColor: "var(--cta-yellow)", color: "#000" }} href="#">
+                  Support
                 </a>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-2 text-sm text-gray-500">Aún no tienes links.</p>
-        )}
-      </section>
+                <button className="py-4 px-6 rounded-full border bg-white text-black" style={{ borderColor: "var(--border-subtle)" }}>
+                  Edit profile
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <section className="mt-8">
+            <h3 className="font-semibold mb-3">Tus links</h3>
+            {dbUser.links && dbUser.links.length > 0 ? (
+              <div className="grid gap-3">
+                {dbUser.links.map((l: any) => (
+                  <a key={l.id} href={l.url} className="block rounded-xl p-4" style={{ backgroundColor: "#ffffff", border: `1px solid ${"var(--border-subtle)"}` }}>
+                    <div className="font-medium">{l.title ?? l.url}</div>
+                    <div className="text-sm text-gray-500">{l.url}</div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">Aún no tienes links.</p>
+            )}
+          </section>
+        </div>
+      </div>
     </main>
   );
 }

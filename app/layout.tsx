@@ -33,28 +33,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}> 
         <ClerkProvider localization={esES}>
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <SignedOut>
-              <SignInButton>
-                <button className="bg-white text-[#6c47ff] border border-[#6c47ff] rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                  Iniciar Sesión
-                </button>
-              </SignInButton>
-              <SignUpButton>
-                <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                  Sign Up
-                </button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+          <header className="w-full border-b border-[#E5E5E5] bg-white">
+            <div className="max-w-3xl mx-auto flex items-center justify-between p-4">
+              <div className="font-bold text-lg">Linktree Clone</div>
+              <div className="flex items-center gap-3">
+                <SignedOut>
+                  <SignInButton>
+                    <button className="bg-white text-black border border-[#E5E5E5] rounded-full font-medium text-sm h-10 px-4 cursor-pointer">
+                      Iniciar sesión
+                    </button>
+                  </SignInButton>
+                  <SignUpButton>
+                    <button className="bg-[#FFDD00] text-black rounded-full font-semibold text-sm h-10 px-4 cursor-pointer">
+                      Crear cuenta
+                    </button>
+                  </SignUpButton>
+                </SignedOut>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+              </div>
+            </div>
           </header>
-          {children}
+
+          <main className="min-h-[calc(100vh-64px)]">
+            <div className="max-w-3xl mx-auto py-10 px-4">{children}</div>
+          </main>
         </ClerkProvider>
       </body>
     </html>
