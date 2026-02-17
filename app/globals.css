@@ -11,9 +11,14 @@
 }
 
 body {
-  background-color: var(--bg-page);
+  background-image: url('/background%20.svg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-geist-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial);
+  min-height: 100vh;
 }
 
 /* Utility: ensure no dark mode styles leak in */
