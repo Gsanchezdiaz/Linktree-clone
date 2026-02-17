@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import prisma from "../../lib/prisma";
+import CopyButton from "../components/copy-button";
 
 interface Params {
   username: string;
@@ -29,6 +30,9 @@ export default async function PublicProfilePage({
 
   // Extract first letter for avatar
   const avatarLetter = (user.name ?? user.username).charAt(0).toUpperCase();
+  
+  // Build public profile URL for copy button
+  const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${user.username}`;
 
   return (
     <main className="min-h-screen flex items-start justify-center px-6 py-10" style={{ backgroundColor: "#fff" }}>
@@ -40,6 +44,11 @@ export default async function PublicProfilePage({
           </div>
           <h1 className="text-4xl font-extrabold text-black">{user.name ?? user.username}</h1>
           <p className="mt-2 text-gray-500">@{user.username}</p>
+          
+          {/* Copy Profile Link Button */}
+          <div className="mt-6 flex justify-center">
+            <CopyButton url={profileUrl} label="Copiar perfil" />
+          </div>
         </div>
 
         {/* Links Section */}
