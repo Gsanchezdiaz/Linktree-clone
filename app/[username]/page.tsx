@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "../../lib/prisma";
 import CopyButton from "../components/copy-button";
 
@@ -28,8 +29,13 @@ export default async function PublicProfilePage({
     notFound();
   }
 
-  // Extract first letter for avatar
+  // Extract first letter for avatar fallback
   const avatarLetter = (user.name ?? user.username).charAt(0).toUpperCase();
+  
+  // Fetch Clerk user to get profile image
+  const client = await clerkClient();
+  const clerkUser = await client.users.getUser(user.clerkId);
+  const profileImageUrl = clerkUser?.imageUrl;
   
   // Build public profile URL for copy button
   const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${user.username}`;
@@ -41,9 +47,18 @@ export default async function PublicProfilePage({
         <div className="card">
           {/* Header / Avatar + Name */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full border-2 mb-6" style={{ backgroundColor: "var(--cta-yellow)", borderColor: "var(--border-subtle)" }}>
-              <span className="text-5xl font-bold text-black">{avatarLetter}</span>
-            </div>
+            {profileImageUrl ? (
+              <img
+                src={profileImageUrl}
+                alt={user.name ?? user.username}
+                className="w-24 h-24 rounded-full border-2 mb-6 mx-auto object-cover"
+                style={{ borderColor: "var(--border-subtle)" }}
+              />
+            ) : (
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full border-2 mb-6" style={{ backgroundColor: "var(--cta-yellow)", borderColor: "var(--border-subtle)" }}>
+                <span className="text-5xl font-bold text-black">{avatarLetter}</span>
+              </div>
+            )}
             <h1 className="text-4xl font-extrabold text-black">{user.name ?? user.username}</h1>
             <p className="mt-2 text-gray-500">@{user.username}</p>
             
