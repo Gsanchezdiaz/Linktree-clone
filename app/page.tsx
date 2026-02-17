@@ -9,12 +9,56 @@ export default async function Page() {
   // Not signed in -> show call to sign in
   if (!authUser) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 py-16">
-        <div className="w-full max-w-md rounded-xl border p-8 text-center" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
-          <h1 className="text-3xl font-extrabold mb-2">Bienvenido</h1>
-          <p className="text-gray-500 mb-6">Inicia sesión para reclamar tu username y administrar tus links.</p>
-          <div className="flex justify-center">
-            <SignInButton />
+      <main className="min-h-screen hero-glow flex flex-col items-center justify-center px-6 py-16">
+        <div className="w-full max-w-2xl space-y-6">
+          {/* Main Hero Card */}
+          <div className="card text-center">
+            <div className="mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style={{ backgroundColor: "var(--cta-yellow)" }}>
+                <span className="text-4xl">🔗</span>
+              </div>
+            </div>
+            <h1 className="text-5xl font-extrabold mb-4">Tu Linktree Personal</h1>
+            <p className="text-lg text-gray-600 mb-2">Comparte todos tus links en un único lugar</p>
+            <p className="text-gray-500 mb-8">Crea tu perfil público y administra tus links de forma simple y elegante.</p>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="card text-center p-6">
+              <div className="text-3xl mb-3">⚡</div>
+              <h3 className="font-semibold mb-2">Rápido</h3>
+              <p className="text-sm text-gray-500">Crea tu perfil en segundos y comparte tus links al instante.</p>
+            </div>
+            <div className="card text-center p-6">
+              <div className="text-3xl mb-3">✨</div>
+              <h3 className="font-semibold mb-2">Simple</h3>
+              <p className="text-sm text-gray-500">Interfaz intuitiva y fácil de usar, sin complicaciones.</p>
+            </div>
+            <div className="card text-center p-6">
+              <div className="text-3xl mb-3">🎯</div>
+              <h3 className="font-semibold mb-2">Efectivo</h3>
+              <p className="text-sm text-gray-500">Comparte tu perfil y conecta con tu audiencia.</p>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="card text-center">
+            <h2 className="text-2xl font-semibold mb-4">¿Listo para empezar?</h2>
+            <p className="text-gray-500 mb-6">Inicia sesión con tu cuenta para crear tu perfil.</p>
+            <div className="flex justify-center">
+              <SignInButton />
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-center pt-8">
+            <p className="text-sm text-gray-500">
+              ¿Ya tienes cuenta?{" "}
+              <a href="/dashboard" className="font-semibold text-black hover:underline">
+                Accede aquí
+              </a>
+            </p>
           </div>
         </div>
       </main>
@@ -32,8 +76,8 @@ export default async function Page() {
   // If user is signed in but hasn't claimed a username/profile yet
   if (!dbUser) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 py-16">
-        <div className="w-full max-w-lg rounded-xl border p-8" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+      <main className="min-h-screen hero-glow flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-lg card">
           <h2 className="text-2xl font-semibold">¡Bienvenido!</h2>
           <p className="mt-2 text-gray-500">Elige un username para tu perfil público.</p>
 
@@ -52,7 +96,7 @@ export default async function Page() {
     <main className="min-h-screen flex items-start justify-center px-6 py-10">
       <div className="w-full max-w-2xl space-y-6">
         {/* Welcome card */}
-        <div className="rounded-xl border p-6" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+        <div className="card">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-xl bg-white border flex items-center justify-center" style={{ borderColor: "var(--border-subtle)" }}>
               <span className="text-2xl">👋</span>
@@ -73,7 +117,7 @@ export default async function Page() {
         </div>
 
         {/* Add Link card */}
-        <div className="rounded-xl border p-6" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+        <div className="card">
           <h2 className="text-2xl font-semibold">Agregar un link</h2>
           <p className="mt-2 text-gray-500">Añade un link que quieras compartir en tu perfil.</p>
 
@@ -85,7 +129,7 @@ export default async function Page() {
         </div>
 
         {/* Links list card */}
-        <div className="rounded-xl border p-6" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+        <div className="card">
           <h3 className="font-semibold mb-3">Tus links</h3>
           {dbUser.links && dbUser.links.length > 0 ? (
             <div className="grid gap-3">

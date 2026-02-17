@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-md rounded-xl border p-8 text-center" style={{ backgroundColor: "var(--card-bg)", borderColor: "var(--border-subtle)" }}>
+    <main className="min-h-screen hero-glow flex items-center justify-center px-6">
+      <div className="w-full max-w-md card text-center">
         <h1 className="text-6xl font-extrabold mb-4" style={{ color: "var(--text-primary)" }}>
           404
         </h1>
