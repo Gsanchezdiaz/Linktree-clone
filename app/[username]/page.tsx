@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { clerkClient } from "@clerk/nextjs/server";
+import { ExternalLink, Link as LinkIcon } from "lucide-react";
 import prisma from "../../lib/prisma";
 import CopyButton from "../components/copy-button";
 
@@ -77,17 +78,19 @@ export default async function PublicProfilePage({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block p-4 rounded-full border border-gray-300 text-center font-semibold text-black transition-all hover:shadow-lg hover:scale-105"
+                  className="flex items-center justify-center gap-2 p-4 rounded-full border text-center font-semibold text-black transition-all hover:shadow-lg hover:scale-105"
                   style={{
                     backgroundColor: "var(--card-bg)",
                     borderColor: "var(--border-subtle)",
                   }}
                 >
                   {link.title || link.url}
+                  <ExternalLink size={16} />
                 </a>
               ))
             ) : (
-              <div className="text-center py-6">
+              <div className="text-center py-8">
+                <LinkIcon size={40} className="mx-auto mb-3 text-gray-400" />
                 <p className="text-gray-500">Este usuario aún no tiene links compartidos.</p>
               </div>
             )}

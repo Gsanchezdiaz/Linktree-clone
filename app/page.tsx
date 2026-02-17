@@ -1,5 +1,6 @@
 import { SignInButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { Trash2, Link as LinkIcon } from "lucide-react";
 import prisma from "../lib/prisma";
 import { claimUsername, addLink, deleteLink } from "./actions";
 
@@ -141,13 +142,18 @@ export default async function Page() {
                   </div>
                   <form action={deleteLink} method="post">
                     <input type="hidden" name="linkId" value={l.id} />
-                    <button type="submit" className="py-2 px-4 rounded-full border bg-white text-black" style={{ borderColor: "var(--border-subtle)" }}>Eliminar</button>
+                    <button type="submit" className="py-2 px-3 rounded-full border bg-white text-black transition-colors hover:bg-red-50" style={{ borderColor: "var(--border-subtle)" }} title="Eliminar link">
+                      <Trash2 size={18} />
+                    </button>
                   </form>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">Aún no tienes links. Usa el formulario de arriba para agregar uno.</p>
+            <div className="text-center py-6">
+              <LinkIcon size={32} className="mx-auto mb-2 text-gray-400" />
+              <p className="text-gray-500">Aún no tienes links. Usa el formulario de arriba para agregar uno.</p>
+            </div>
           )}
         </div>
       </div>
